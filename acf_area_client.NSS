@@ -1,4 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
 //
 //  System Name : ACR Configuration File
 //     Filename : acf_area_client.nss
@@ -51,4 +50,29 @@ void main() {
     ACR_AreaOnClientEnter();
 
     // Custom code goes below this line.
+	object oEnterer = GetEnteringObject();
+	if (GetLocalInt(OBJECT_SELF, "ACR_IS_TRAVEL_AREA") == 1) {
+		// report collison status
+		if (GetIsPC(oEnterer)) {
+			// check collison status
+			if (GetCollision(oEnterer)) {
+				// PC has collision on, as expected.
+				WriteTimestampedLogEntry("Collision STILL ENABLED for PC: "+GetName(oEnterer)+" when entering Travel Map area: "+GetName(OBJECT_SELF)+" with leader: "+GetName(GetFactionLeader(oEnterer)));
+				//SetCollision(oEnterer, FALSE);
+			} 
+		}
+	} else if (GetIsPC(oEnterer)) {
+		// check collison status
+		if (GetCollision(oEnterer)) {
+			// PC has collision on, as expected.
+		} else {
+			if (GetIsObjectValid(oEnterer)) {
+				WriteTimestampedLogEntry("Collision still OFF for PC: "+GetName(oEnterer)+" when entering area: "+GetName(OBJECT_SELF)+" with leader: "+GetName(GetFactionLeader(oEnterer))+". Turning it back ON.");
+				SetCollision(oEnterer, TRUE);
+			} else {
+				WriteTimestampedLogEntry("Collision still OFF for INVALID PC: "+GetName(oEnterer)+" when entering area: "+GetName(OBJECT_SELF)+" with leader: "+GetName(GetFactionLeader(oEnterer))+". Could not reactivate safely.");
+			}
+		}
+	}
+
 }
